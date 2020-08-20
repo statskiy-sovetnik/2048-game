@@ -4,3 +4,7 @@
 /node_modules/
 robots.txt
 package-lock.json
+*.ini
+
+# Bower root directory
+/bower_components/
