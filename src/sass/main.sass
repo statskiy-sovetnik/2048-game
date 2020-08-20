@@ -1,13 +1,61 @@
 @import "bootstrap-4.5.2/scss/bootstrap"
 
-.game-space
-  margin: 0 auto
+$cellMargin: 7px
 
-  .board
+ol
+  list-style: none
+  margin: 0
+  padding: 0
+
+.game-space
+  position: absolute
+  top: 50%
+  left: 50%
+  transform: translateY(-50%) translateX(-50%)
+
+  .game-panel
     display: flex
-    flex-direction: column
-    background-color: #919049
+    flex-direction: row
+    justify-content: space-between
+    margin-bottom: 50px
+
+    .score-block
+      #score
+        margin-left: 12px
+        font-style: italic
+        font-size: 18px
+
+    .buttons-block
+      display: flex
+      flex-direction: column
+      button
+        margin-bottom: 6px
+        .button-icon
+          margin-right: 3px
+
+
+  .board-row-wrapper
+    display: table
+    background-color: #a29b7b
+    border-radius: 6px
+    padding: $cellMargin / 2 0
 
     .board-row
       display: flex
       flex-direction: row
+      padding: $cellMargin / 2
+      ol
+        display: flex
+        flex-direction: row
+        .cell
+          display: flex
+          justify-content: center
+          align-items: center
+          height: 60px
+          width: 60px
+          border-radius: 3px
+          margin: 0 $cellMargin/2
+
+          &.empty
+            background-color: #c6c5a4
+
