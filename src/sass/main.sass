@@ -1,6 +1,7 @@
 @import "bootstrap-4.5.2/scss/bootstrap"
 
 $cellMargin: 7px
+$cellSize: 60px
 
 ol
   list-style: none
@@ -12,6 +13,7 @@ ol
   top: 50%
   left: 50%
   transform: translateY(-50%) translateX(-50%)
+  padding-top: $cellSize * 4 + $cellMargin * 5
 
   .game-panel
     display: flex
@@ -36,9 +38,18 @@ ol
 
   .board-row-wrapper
     display: table
-    background-color: #a29b7b
     border-radius: 6px
     padding: $cellMargin / 2 0
+
+    &#backBoard
+      background-color: #a29b7b
+      .cell
+        background-color: #c6c5a4
+
+    &#frontBoard
+      background-color: transparent
+      position: relative
+      bottom: $cellSize * 4 + $cellMargin * 5
 
     .board-row
       display: flex
@@ -55,7 +66,4 @@ ol
           width: 60px
           border-radius: 3px
           margin: 0 $cellMargin/2
-
-          &.empty
-            background-color: #c6c5a4
 

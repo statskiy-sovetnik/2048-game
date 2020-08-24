@@ -7229,7 +7229,8 @@ ol {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translateY(-50%) translateX(-50%); }
+  transform: translateY(-50%) translateX(-50%);
+  padding-top: 275px; }
   .game-space .game-panel {
     display: flex;
     flex-direction: row;
@@ -7248,9 +7249,16 @@ ol {
           margin-right: 3px; }
   .game-space .board-row-wrapper {
     display: table;
-    background-color: #a29b7b;
     border-radius: 6px;
     padding: 3.5px 0; }
+    .game-space .board-row-wrapper#backBoard {
+      background-color: #a29b7b; }
+      .game-space .board-row-wrapper#backBoard .cell {
+        background-color: #c6c5a4; }
+    .game-space .board-row-wrapper#frontBoard {
+      background-color: transparent;
+      position: relative;
+      bottom: 275px; }
     .game-space .board-row-wrapper .board-row {
       display: flex;
       flex-direction: row;
@@ -7266,5 +7274,3 @@ ol {
           width: 60px;
           border-radius: 3px;
           margin: 0 3.5px; }
-          .game-space .board-row-wrapper .board-row ol .cell.empty {
-            background-color: #c6c5a4; }

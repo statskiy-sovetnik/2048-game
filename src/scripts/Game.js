@@ -1,5 +1,6 @@
 import React from "react";
 import {Board} from "./Board.js";
+import {FrontBoard} from "./FrontBoard";
 import {Cell} from "./Cell";
 
 class Game extends React.Component {
@@ -70,6 +71,12 @@ class Game extends React.Component {
                     </div>
                 </div>
                 <Board
+                    id="backBoard"
+                    renderCell={(i) => this.renderCell(i)}
+                    renderRow={(i) => this.renderRow(i)}
+                />
+                <FrontBoard
+                    id="frontBoard"
                     renderCell={(i) => this.renderCell(i)}
                     renderRow={(i) => this.renderRow(i)}
                 />

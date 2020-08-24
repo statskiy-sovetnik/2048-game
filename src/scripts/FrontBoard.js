@@ -1,10 +1,9 @@
 import React from "react";
 
-class Board extends React.Component {
+class FrontBoard extends React.Component {
 
     render() {
-        const rows_n = 4;
-        const rows = Array(rows_n).fill(null).map((c, ind) => {
+        const rows = Array(4).fill(null).map((c, ind) => {
             return this.props.renderRow(ind);
         });
 
@@ -16,4 +15,4 @@ class Board extends React.Component {
     }
 }
 
-export {Board};
+export {FrontBoard};
