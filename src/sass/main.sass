@@ -2,6 +2,7 @@
 
 $cellMargin: 7px
 $cellSize: 60px
+$boardSize: $cellSize * 4 + $cellMargin * 5
 
 ol
   list-style: none
@@ -13,7 +14,7 @@ ol
   top: 50%
   left: 50%
   transform: translateY(-50%) translateX(-50%)
-  padding-top: $cellSize * 4 + $cellMargin * 5
+  padding-top: $boardSize
 
   .game-panel
     display: flex
@@ -47,9 +48,11 @@ ol
         background-color: #c6c5a4
 
     &#frontBoard
+      height: $boardSize
+      width: $boardSize
       background-color: transparent
       position: relative
-      bottom: $cellSize * 4 + $cellMargin * 5
+      bottom: $boardSize
 
     .board-row
       display: flex

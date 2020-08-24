@@ -7256,6 +7256,8 @@ ol {
       .game-space .board-row-wrapper#backBoard .cell {
         background-color: #c6c5a4; }
     .game-space .board-row-wrapper#frontBoard {
+      height: 275px;
+      width: 275px;
       background-color: transparent;
       position: relative;
       bottom: 275px; }

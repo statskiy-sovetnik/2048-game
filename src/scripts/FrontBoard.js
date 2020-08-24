@@ -4,7 +4,7 @@ class FrontBoard extends React.Component {
 
     render() {
         const rows = Array(4).fill(null).map((c, ind) => {
-            return this.props.renderRow(ind);
+            return this.props.renderEmptyRow(ind);
         });
 
         return (
