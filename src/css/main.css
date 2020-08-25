@@ -7261,6 +7261,13 @@ ol {
       background-color: transparent;
       position: relative;
       bottom: 275px; }
+      .game-space .board-row-wrapper#frontBoard .cell {
+        background-color: #d7d6c5;
+        font-size: 20px;
+        font-weight: normal;
+        color: #1f1611; }
+        .game-space .board-row-wrapper#frontBoard .cell.empty {
+          background-color: #c6c5a4; }
     .game-space .board-row-wrapper .board-row {
       display: flex;
       flex-direction: row;

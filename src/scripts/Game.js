@@ -16,10 +16,11 @@ class Game extends React.Component {
         }
     }
 
-    renderCell(i) {
+    renderCell(i, value, class_str) {
         return <Cell
-            value="none"
+            value={value}
             id_={i}
+            className={"cell " + class_str}
         />
     }
 
@@ -28,7 +29,7 @@ class Game extends React.Component {
         for (let c = 0; c < 4; c++) {
             let cell_num = i*4 + c + 1;
             cells[c] = (
-                <li key={"slot-" + cell_num}>{this.renderCell(cell_num)}</li>
+                <li key={"slot-" + cell_num}>{this.renderCell(cell_num, null, "empty")}</li>
             )
         }
 
@@ -39,12 +40,18 @@ class Game extends React.Component {
         )
     }
 
-    renderEmptyRow(i) {
-        const cells = []
+    renderFrontRow(i) {
+        const history = {}; Object.assign(history, this.state.history[this.state.history.length - 1]);
+        const cur_cells = history.cells;
+        const cells = [];
+
         for (let c = 0; c < 4; c++) {
             let cell_num = i*4 + c + 1;
+            let class_str = (cur_cells[cell_num] == null) ? "empty" : "visible value-" + cur_cells[cell_num];
             cells[c] = (
-                <li key={"front-slot-" + cell_num}/>
+                <li key={"cell-" + cell_num}>
+                    {this.renderCell(cell_num, cur_cells[cell_num], class_str) }
+                </li>
             )
         }
 
@@ -55,7 +62,45 @@ class Game extends React.Component {
         )
     }
 
+    findEmptySlot() {
+        const empty_slots = [];
+        const history = this.state.history[this.state.history.length - 1]; //take the current board state
+        const cur_cells = history.cells;
+
+        let cur_ind = 0;
+        for(let ind = 0; ind < cur_cells.length; ind++) {
+            if(cur_cells[ind] == null) {
+                empty_slots[cur_ind] = ind;
+                cur_ind++;
+            }
+        }
+
+        let slot_id = 0;
+        while(empty_slots.indexOf(slot_id) === -1) {
+            slot_id = Math.round(Math.random() * 15);
+        }
+        return slot_id;
+    }
+
+    //Spawn a new cell at a random empty spot
+
+    spawnCell() {
+        const slot_id = this.findEmptySlot();
+        const history = {}; //take the current board state
+        Object.assign(history, this.state.history[this.state.history.length - 1]);
+        const cur_cells = history.cells;
+        let least_num = 0;
+
+        for(let c = 0; c < cur_cells.length; c++) {
+            least_num = (least_num < +cur_cells[c]) ? least_num : cur_cells[c];
+        }
+
+
+    }
+
     render() {
+
+
         return (
             <div className="game-space">
                 <div className="game-panel">
@@ -95,7 +140,7 @@ class Game extends React.Component {
                     id="frontBoard"
                     renderCell={(i) => this.renderCell(i)}
                     renderRow={(i) => this.renderRow(i)}
-                    renderEmptyRow={(i) => this.renderEmptyRow(i)}
+                    renderFrontRow={(i) => this.renderFrontRow(i)}
                 />
             </div>
         )
