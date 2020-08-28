@@ -7229,6 +7229,7 @@ ol {
   padding: 0; }
 
 .game-space {
+  width: 275px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -7238,6 +7239,7 @@ ol {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-top: 30px;
     margin-bottom: 50px; }
     .game-space .game-panel .score-block #score {
       margin-left: 12px;

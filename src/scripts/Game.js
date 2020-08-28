@@ -165,8 +165,14 @@ class Game extends React.Component {
     }
 
     render() {
+        const game_guide = !this.state.game_started ?
+            "Нажмите \"Начать\", чтобы создать первые клетки" :
+            "Нажмите на одну из кнопок со стрелками, чтобы перемещать клетки";
+
+
         return (
             <div className="game-space">
+                {game_guide}
                 <div className="game-panel">
                     <div className="score-block">
                         Очки:
