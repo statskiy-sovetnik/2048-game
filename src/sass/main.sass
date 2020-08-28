@@ -4,6 +4,9 @@ $cellMargin: 7px
 $cellSize: 60px
 $boardSize: $cellSize * 4 + $cellMargin * 5
 
+html, body
+  background: #e3dedd
+
 ol
   list-style: none
   margin: 0
@@ -56,11 +59,18 @@ ol
 
       .cell
         background-color: transparent
-        font-size: 20px
-        font-weight: normal
-        color: #1f1611
 
+        span.cell-text
+          color: #1f1611
 
+        &.visible::before
+          content: " "
+          display: block
+          position: absolute
+          width: $cellSize
+          height: $cellSize
+          border-radius: 3px
+          background: #e3e2d4
 
     .board-row
       display: flex
@@ -77,4 +87,9 @@ ol
           width: 60px
           border-radius: 3px
           margin: 0 $cellMargin/2
+
+          span.cell-text
+            font-size: 20px
+            font-weight: normal
+            position: relative
 

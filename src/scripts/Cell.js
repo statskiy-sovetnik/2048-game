@@ -4,7 +4,9 @@ class Cell extends React.Component {
     render() {
         return (
             <div className={this.props.className}>
-                {this.props.value}
+                <span className="cell-text">
+                    {this.props.value}
+                </span>
             </div>
         )
     }

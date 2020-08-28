@@ -7220,6 +7220,9 @@ a.text-dark:hover, a.text-dark:focus {
     color: inherit;
     border-color: #dee2e6; } }
 
+html, body {
+  background: #e3dedd; }
+
 ol {
   list-style: none;
   margin: 0;
@@ -7262,10 +7265,17 @@ ol {
       position: relative;
       bottom: 275px; }
       .game-space .board-row-wrapper#frontBoard .cell {
-        background-color: transparent;
-        font-size: 20px;
-        font-weight: normal;
-        color: #1f1611; }
+        background-color: transparent; }
+        .game-space .board-row-wrapper#frontBoard .cell span.cell-text {
+          color: #1f1611; }
+        .game-space .board-row-wrapper#frontBoard .cell.visible::before {
+          content: " ";
+          display: block;
+          position: absolute;
+          width: 60px;
+          height: 60px;
+          border-radius: 3px;
+          background: #e3e2d4; }
     .game-space .board-row-wrapper .board-row {
       display: flex;
       flex-direction: row;
@@ -7281,3 +7291,7 @@ ol {
           width: 60px;
           border-radius: 3px;
           margin: 0 3.5px; }
+          .game-space .board-row-wrapper .board-row ol .cell span.cell-text {
+            font-size: 20px;
+            font-weight: normal;
+            position: relative; }
