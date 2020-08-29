@@ -7240,7 +7240,7 @@ ol {
     flex-direction: row;
     justify-content: space-between;
     margin-top: 30px;
-    margin-bottom: 50px; }
+    margin-bottom: 30px; }
     .game-space .game-panel .score-block #score {
       margin-left: 12px;
       font-style: italic;
@@ -7252,6 +7252,18 @@ ol {
         margin-bottom: 6px; }
         .game-space .game-panel .buttons-block button .button-icon {
           margin-right: 3px; }
+  .game-space .arrows-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px; }
+    .game-space .arrows-block .move-arrow {
+      margin: 0 14px;
+      width: 30px;
+      height: 30px; }
+    .game-space .arrows-block .middle-arrows-block {
+      display: flex;
+      flex-direction: row; }
   .game-space .board-row-wrapper {
     display: table;
     border-radius: 6px;

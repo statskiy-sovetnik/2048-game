@@ -129,7 +129,7 @@ class Game extends React.Component {
         }
     }
 
-    startGame(clearContent) {
+    startGame() {
         this.clearBoard();
 
         this.setState({
@@ -139,6 +139,52 @@ class Game extends React.Component {
             this.spawnCell();
             this.spawnCell();
         })
+    }
+
+    renderArrowBtn(gameStarted, side) {
+        //sides: 0 - top, 1 - right, 2 - bottom, 3 - left
+        const sides = ["up", "right", "down", "left"];
+        const icon_size = "16px";
+        const icons=[
+            //Up
+            <svg width={icon_size} height={icon_size} viewBox="0 0 16 16" className="bi bi-arrow-up-short" fill="currentColor"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd"
+                      d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z"/>
+            </svg>,
+            //Right
+            <svg width={icon_size} height={icon_size} viewBox="0 0 16 16" className="bi bi-arrow-right-short" fill="currentColor"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd"
+                      d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+            </svg>,
+            //Down
+            <svg width={icon_size} height={icon_size} viewBox="0 0 16 16" className="bi bi-arrow-down-short" fill="currentColor"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd"
+                      d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z"/>
+            </svg>,
+            //Left
+            <svg width={icon_size} height={icon_size} viewBox="0 0 16 16" className="bi bi-arrow-left-short" fill="currentColor"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd"
+                      d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+            </svg>
+        ];
+
+        return (
+            <button
+                id={sides[+side]}
+                onClick={() => {gameStarted ? this.makeMove(side) : this.startGame()}}
+                className="move-arrow"
+            >
+                {icons[+side]}
+            </button>
+        );
+    }
+
+    makeMove(side) {
+        alert("Move: " + side)
     }
 
     clearBoard() {
@@ -167,8 +213,8 @@ class Game extends React.Component {
     render() {
         const game_guide = !this.state.game_started ?
             "Нажмите \"Начать\", чтобы создать первые клетки" :
-            "Нажмите на одну из кнопок со стрелками, чтобы перемещать клетки";
-
+            "Нажмите на одну из кнопок со стрелками, чтобы переместить клетки";
+        const game_started = this.state.game_started;
 
         return (
             <div className="game-space">
@@ -193,6 +239,14 @@ class Game extends React.Component {
                         </button>
                         {this.startBtnContent(this.state.game_started)}
                     </div>
+                </div>
+                <div className="arrows-block">
+                    {this.renderArrowBtn(game_started, 0)}
+                    <div className="middle-arrows-block">
+                        {this.renderArrowBtn(game_started, 3)}
+                        {this.renderArrowBtn(game_started, 1)}
+                    </div>
+                    {this.renderArrowBtn(game_started, 2)}
                 </div>
                 <Board
                     id="backBoard"
