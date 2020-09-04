@@ -7258,7 +7258,7 @@ ol {
     align-items: center;
     margin-bottom: 15px; }
     .game-space .arrows-block .move-arrow {
-      margin: 0 14px;
+      margin: 0 15px;
       width: 30px;
       height: 30px; }
     .game-space .arrows-block .middle-arrows-block {
@@ -7279,6 +7279,12 @@ ol {
       position: relative;
       bottom: 275px; }
       .game-space .board-row-wrapper#frontBoard .cell {
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: top 0.1s linear, bottom 0.1s linear, left 0.1s linear, right 0.1s linear;
         background-color: transparent; }
         .game-space .board-row-wrapper#frontBoard .cell span.cell-text {
           color: #1f1611; }
@@ -7290,6 +7296,14 @@ ol {
           height: 60px;
           border-radius: 3px;
           background: #e3e2d4; }
+        .game-space .board-row-wrapper#frontBoard .cell.shift-bottom {
+          top: 67px; }
+        .game-space .board-row-wrapper#frontBoard .cell.shift-top {
+          top: -67px; }
+        .game-space .board-row-wrapper#frontBoard .cell.shift-right {
+          left: 67px; }
+        .game-space .board-row-wrapper#frontBoard .cell.shift-left {
+          left: -67px; }
     .game-space .board-row-wrapper .board-row {
       display: flex;
       flex-direction: row;

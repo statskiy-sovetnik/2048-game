@@ -3,6 +3,7 @@
 $cellMargin: 7px
 $cellSize: 60px
 $boardSize: $cellSize * 4 + $cellMargin * 5
+$cellMoveTime: 0.1s
 
 html, body
   background: #e3dedd
@@ -48,7 +49,7 @@ ol
     align-items: center
     margin-bottom: 15px
     .move-arrow
-      margin: 0 14px
+      margin: 0 15px
       width: 30px
       height: 30px
 
@@ -75,6 +76,12 @@ ol
       bottom: $boardSize
 
       .cell
+        position: relative
+        top: 0
+        left: 0
+        right: 0
+        bottom: 0
+        transition: top $cellMoveTime linear, bottom $cellMoveTime linear, left $cellMoveTime linear, right $cellMoveTime linear
         background-color: transparent
 
         span.cell-text
@@ -88,6 +95,15 @@ ol
           height: $cellSize
           border-radius: 3px
           background: #e3e2d4
+
+        &.shift-bottom
+          top: $cellMargin + $cellSize
+        &.shift-top
+          top: -($cellMargin + $cellSize)
+        &.shift-right
+          left: $cellMargin + $cellSize
+        &.shift-left
+          left: -($cellMargin + $cellSize)
 
     .board-row
       display: flex

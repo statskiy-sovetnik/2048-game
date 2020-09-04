@@ -8,14 +8,60 @@ class Game extends React.Component {
         super(props);
 
         const cells = Array(16).fill(null);
+        const shifts = Array(16).fill(null);
+
+        this.up_move_indeces = new Array(4);
+        this.down_move_indeces = new Array(4);
+        this.right_move_indeces = new Array(4);
+        this.left_move_indeces = new Array(4);
+
+        this.CELL_MARGIN = 7;
+        this.CELL_SIZE = 60;
+
+        //Setting the indeces arrays _______________
+
+        for(let i = 0; i < 4; i++){
+            this.down_move_indeces[i] = new Array(4);
+            this.up_move_indeces[i] = new Array(4);
+            this.right_move_indeces[i] = new Array(4);
+            this.left_move_indeces[i] = new Array(4);
+            for(let c = 0; c < 4; c++) {
+                this.down_move_indeces[i][c] = (3-c)*4 + i;
+                this.up_move_indeces[i][c] = c*4 + i;
+                this.left_move_indeces[i][c] = i*4 + c;
+                this.right_move_indeces[i][c] = i*4 + 3 - c;
+            }
+        }
+
+        //Current states of cells and shifts (you need them toa avoid asynchronous updates of state
+
+        this.shifts_state = new Array(16).fill(null);
+        this.cell_state = new Array(16).fill(null);
 
         this.state = {
             history: [{cells: cells}], //stores the history of moves. each state of cells stores degrees of '2'
+            shifts: shifts,
             score: 0,
             least: 1,    //the least degree of '2' on the board
             step_num: 0,
             game_started: false,
         }
+    }
+
+    set shiftsState(shifts) {
+        this.shifts_state = shifts;
+    }
+
+    get shiftsState() {
+        return this.shifts_state;
+    }
+
+    set cellsState(cells) {
+        this.cell_state = cells;
+    }
+
+    get cellsState() {
+        return this.cell_state;
     }
 
     renderCell(i, value, class_str) {
@@ -46,11 +92,13 @@ class Game extends React.Component {
         const cur_state = {};
         Object.assign(cur_state, this.state.history[this.state.history.length - 1]);
         const cur_cells = cur_state.cells;
+        const cur_shifts = this.state.shifts.slice();
         const cells = [];
 
         for (let c = 0; c < 4; c++) {
             let cell_num = i*4 + c;
             let class_str = (cur_cells[cell_num] == null) ? "empty" : "visible value-" + cur_cells[cell_num];
+            class_str += (cur_shifts[cell_num]) ? " shift-" + cur_shifts[cell_num] : "";
             cells[c] = (
                 <li key={"cell-" + cell_num}>
                     {this.renderCell(cell_num, cur_cells[cell_num], class_str) }
@@ -67,9 +115,9 @@ class Game extends React.Component {
 
     findEmptySlot() {
         const empty_slots = [];
-        const cur_state = {};
-        Object.assign(cur_state, this.state.history[this.state.history.length - 1]);
-        const cur_cells = cur_state.cells;
+        /*const cur_state = {};
+        Object.assign(cur_state, this.state.history[this.state.history.length - 1]);*/
+        const cur_cells = this.cell_state.slice();
 
         let cur_ind = 0;
         for(let ind = 0; ind < cur_cells.length; ind++) {
@@ -88,18 +136,20 @@ class Game extends React.Component {
 
     //Spawn a new cell at a random empty spot
 
-    spawnCell() {
+    spawnCell(ind) {
         const slot_id = this.findEmptySlot();
-        const cur_state = {};
-        Object.assign(cur_state, this.state.history[this.state.history.length - 1]);
-        const cur_cells = cur_state.cells;
+        /*const cur_state = {};
+        Object.assign(cur_state, this.state.history[this.state.history.length - 1]);*/
+        let cur_cells = this.cell_state.slice();
 
         //Placing the least number on the empty slot
 
         cur_cells[slot_id] = Math.pow(2, this.state.least);
-        this.setState({
-            history: this.state.history.concat([{cells: cur_cells}])
-        });
+        this.cell_state = cur_cells;  //when a cell spawns, it doesn't update the whole history, so that when you
+                                      //go the the previous move, it woudn't just remove the cell
+/*        this.setState({
+            history: this.state.history.concat([{cells: cur_cells}]),
+        });*/
     }
 
     startBtnContent(game_started) {
@@ -136,8 +186,13 @@ class Game extends React.Component {
             game_started: true,
             step_num: 1
         }, () => {
-            this.spawnCell();
-            this.spawnCell();
+            this.spawnCell(1);
+            this.spawnCell(2);
+
+            const cells = this.cell_state;
+            this.setState({
+                history: this.state.history.concat([{cells: cells}]),
+            });
         })
     }
 
@@ -183,11 +238,135 @@ class Game extends React.Component {
         );
     }
 
+    takeTwoCells(cur_row, start_ind) {
+        let c = 0;
+        let neigbr_cells = {};
+        neigbr_cells.indeces = new Array(2).fill(null);
+        for(let j = 3-start_ind; j >= 0 && c < 2; j--) {
+            neigbr_cells[j] = cur_row[3-j];
+            neigbr_cells.indeces[c] = j;
+            c++;
+        }
+
+        return neigbr_cells;
+    }
+
+    mergeCells(from, to) {
+    }
+
+    removeCell(ind) {
+
+    }
+
+    moveCell(from, to) {
+        //определить направление
+        const row_1 = Math.floor(from / 4),
+              row_2 = Math.floor(to / 4),
+              col_1 = from % 4,
+              col_2 = to % 4;
+
+        /*let cur_state = {};
+        Object.assign(cur_state, this.state.history[this.state.history.length - 1]);*/
+        let cur_shifts = this.shifts_state.slice();
+        let cur_cells = this.cell_state.slice();
+        console.log("From: " + from + " To: " + to);
+
+        if(row_1 === row_2) {
+            if(col_1 > col_2) { //shift "from" to the left
+                console.log(from + "shifts right");
+                cur_shifts[from] = "left";
+            }
+            else { //to the right
+                cur_shifts[from] = "right";
+                console.log(from + "shifts left");
+            }
+        }
+        else {
+            if(row_1 > row_2) { //shift down
+                cur_shifts[from] = "top";
+                console.log(from + "shifts down");
+            }
+            else {// up
+                console.log(from + "shifts up");
+                cur_shifts[from] = "bottom";
+            }
+        }
+
+        console.log("Cell state BEFORE: " + cur_cells);
+        cur_cells[to] = cur_cells[from];
+        cur_cells[from] = null;
+
+        this.cell_state = cur_cells;
+        this.shifts_state = cur_shifts;
+
+        console.log("Cell state AFTER: " + cur_cells);
+    }
+
     makeMove(side) {
-        alert("Move: " + side)
+        let cells = this.cell_state.slice();
+        let cells_indeces = [];
+
+        switch (+side) {
+            case 0:
+                cells_indeces = this.up_move_indeces;
+                break;
+            case 1:
+                cells_indeces = this.right_move_indeces;
+                break;
+            case 2:
+                cells_indeces = this.down_move_indeces;
+                break;
+            case 3:
+                cells_indeces = this.left_move_indeces;
+                break;
+            default:
+                cells_indeces = this.up_move_indeces;
+        }
+
+        for(let i = 0; i < 4; i++) {
+
+            //The algorithm looks like bubble sort. We merge or shift sells until they
+            // are all different and on one side
+
+            for(let s = 0; s < 4; s++) {
+                //Take two neighboring not empty cells
+
+                let neighbr_cells = {}, first, second;
+                for(let j = 0; j < 3; j++) {
+                    cells = this.cell_state.slice();
+
+                    //A current row (or column) of board values
+
+                    let cur_row = cells_indeces[i].map((cell_ind) => {
+                        return cells[cell_ind];
+                    });
+                    console.log("Row: " + cur_row);
+
+                    neighbr_cells = this.takeTwoCells(cur_row, j);
+                    first = neighbr_cells.indeces[0];
+                    second = neighbr_cells.indeces[1];
+                    console.log(neighbr_cells);
+
+                    if(neighbr_cells[second] != null) {
+                        if(neighbr_cells[first] != null) {
+                            if(neighbr_cells[first] === neighbr_cells[second]) {
+                                this.mergeCells(cells_indeces[i][3-first], cells_indeces[i][3-second]);
+                            }
+                        }
+                        else {
+                            this.moveCell(cells_indeces[i][3-second], cells_indeces[i][3-first])
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
     clearBoard() {
+        this.cell_state = new Array(16).fill(null);
+        this.shifts_state = new Array(16).fill(null);
+
         this.setState({
             history: [{cells: Array(16).fill(null)}], //stores the history of moves. each state of cells stores degrees of '2'
             score: 0,
@@ -204,6 +383,7 @@ class Game extends React.Component {
             return;
         }
 
+        this.cell_state = this.state.history[this.state.history.length - 2].cells.slice();
         this.setState({
             history: this.state.history.slice(0, this.state.history.length - 1),
             step_num: moves - 1,
