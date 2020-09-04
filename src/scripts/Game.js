@@ -8,7 +8,6 @@ class Game extends React.Component {
         super(props);
 
         const cells = Array(16).fill(null);
-        const shifts = Array(16).fill(null);
 
         this.up_move_indeces = new Array(4);
         this.down_move_indeces = new Array(4);
@@ -35,33 +34,18 @@ class Game extends React.Component {
 
         //Current states of cells and shifts (you need them toa avoid asynchronous updates of state
 
-        this.shifts_state = new Array(16).fill(null);
-        this.cell_state = new Array(16).fill(null);
+        const shifts_state = new Array(16).fill(null);
+        const cell_state = new Array(16).fill(null);
 
         this.state = {
             history: [{cells: cells}], //stores the history of moves. each state of cells stores degrees of '2'
-            shifts: shifts,
+            shifts_state: shifts_state,
+            cell_state: cell_state,
             score: 0,
             least: 1,    //the least degree of '2' on the board
             step_num: 0,
             game_started: false,
         }
-    }
-
-    set shiftsState(shifts) {
-        this.shifts_state = shifts;
-    }
-
-    get shiftsState() {
-        return this.shifts_state;
-    }
-
-    set cellsState(cells) {
-        this.cell_state = cells;
-    }
-
-    get cellsState() {
-        return this.cell_state;
     }
 
     renderCell(i, value, class_str) {
@@ -92,7 +76,7 @@ class Game extends React.Component {
         const cur_state = {};
         Object.assign(cur_state, this.state.history[this.state.history.length - 1]);
         const cur_cells = cur_state.cells;
-        const cur_shifts = this.state.shifts.slice();
+        const cur_shifts = this.state.shifts_state.slice();
         const cells = [];
 
         for (let c = 0; c < 4; c++) {
@@ -113,15 +97,14 @@ class Game extends React.Component {
         )
     }
 
-    findEmptySlot() {
+    findEmptySlot(cells) {
         const empty_slots = [];
         /*const cur_state = {};
         Object.assign(cur_state, this.state.history[this.state.history.length - 1]);*/
-        const cur_cells = this.cell_state.slice();
 
         let cur_ind = 0;
-        for(let ind = 0; ind < cur_cells.length; ind++) {
-            if(cur_cells[ind] == null) {
+        for(let ind = 0; ind < cells.length; ind++) {
+            if(cells[ind] == null) {
                 empty_slots[cur_ind] = ind;
                 cur_ind++;
             }
@@ -136,20 +119,23 @@ class Game extends React.Component {
 
     //Spawn a new cell at a random empty spot
 
-    spawnCell(ind) {
-        const slot_id = this.findEmptySlot();
-        /*const cur_state = {};
-        Object.assign(cur_state, this.state.history[this.state.history.length - 1]);*/
-        let cur_cells = this.cell_state.slice();
+    spawnCell(times) {
+        let cur_cells = this.state.cell_state.slice();
 
-        //Placing the least number on the empty slot
+        for(let i = 0; i < times; i++) {
+            const slot_id = this.findEmptySlot(cur_cells);
 
-        cur_cells[slot_id] = Math.pow(2, this.state.least);
-        this.cell_state = cur_cells;  //when a cell spawns, it doesn't update the whole history, so that when you
-                                      //go the the previous move, it woudn't just remove the cell
-/*        this.setState({
-            history: this.state.history.concat([{cells: cur_cells}]),
-        });*/
+            //Placing the least number on the empty slot
+            cur_cells[slot_id] = Math.pow(2, this.state.least);
+            console.log("Slot " + slot_id);
+        }
+
+        this.setState({
+            cell_state: cur_cells, //when a cell spawns, it doesn't update the whole history, so that when you
+                                   //go the the previous move, it woudn't just remove the cell
+        }, () => {
+            console.log(this.state.cell_state);
+        });
     }
 
     startBtnContent(game_started) {
@@ -186,12 +172,14 @@ class Game extends React.Component {
             game_started: true,
             step_num: 1
         }, () => {
-            this.spawnCell(1);
             this.spawnCell(2);
 
-            const cells = this.cell_state;
+            const cells = this.state.cell_state;
+            
             this.setState({
                 history: this.state.history.concat([{cells: cells}]),
+            }, () => {
+                console.log("History changed: " + cells);
             });
         })
     }
@@ -267,8 +255,8 @@ class Game extends React.Component {
 
         /*let cur_state = {};
         Object.assign(cur_state, this.state.history[this.state.history.length - 1]);*/
-        let cur_shifts = this.shifts_state.slice();
-        let cur_cells = this.cell_state.slice();
+        let cur_shifts = this.state.shifts_state.slice();
+        let cur_cells = this.state.cell_state.slice();
         console.log("From: " + from + " To: " + to);
 
         if(row_1 === row_2) {
@@ -296,10 +284,13 @@ class Game extends React.Component {
         cur_cells[to] = cur_cells[from];
         cur_cells[from] = null;
 
-        this.cell_state = cur_cells;
-        this.shifts_state = cur_shifts;
+        this.setState({
+            cell_state: cur_cells,
+            shifts_state: cur_shifts,
+        }, () => {
+            console.log("Cell state AFTER: " + cur_cells);
+        });
 
-        console.log("Cell state AFTER: " + cur_cells);
     }
 
     makeMove(side) {
