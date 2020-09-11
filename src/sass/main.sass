@@ -1,5 +1,19 @@
 @import "bootstrap-4.5.2/scss/bootstrap"
 
+@mixin multi-shift($side, $shift-size)
+  @if($side == "left")
+    &.shift-#{$side + "-" + $shift-size}
+      left: -($cellMargin + $cellSize) * $shift-size
+  @if($side == "right")
+    &.shift-#{$side + "-" + $shift-size}
+      left: ($cellMargin + $cellSize) * $shift-size
+  @if($side == "bottom")
+    &.shift-#{$side + "-" + $shift-size}
+      top: ($cellMargin + $cellSize) * $shift-size
+  @if($side == "top")
+    &.shift-#{$side + "-" + $shift-size}
+      top: -($cellMargin + $cellSize) * $shift-size
+
 $cellMargin: 7px
 $cellSize: 60px
 $boardSize: $cellSize * 4 + $cellMargin * 5
@@ -96,14 +110,22 @@ ol
           border-radius: 3px
           background: #e3e2d4
 
-        &.shift-bottom
-          top: $cellMargin + $cellSize
-        &.shift-top
-          top: -($cellMargin + $cellSize)
-        &.shift-right
-          left: $cellMargin + $cellSize
-        &.shift-left
-          left: -($cellMargin + $cellSize)
+        @include multi-shift("bottom", 3)
+        @include multi-shift("bottom", 2)
+        @include multi-shift("bottom", 1)
+
+        @include multi-shift("top", 3)
+        @include multi-shift("top", 2)
+        @include multi-shift("top", 1)
+
+        @include multi-shift("right", 3)
+        @include multi-shift("right", 2)
+        @include multi-shift("right", 1)
+
+        @include multi-shift("left", 3)
+        @include multi-shift("left", 2)
+        @include multi-shift("left", 1)
+
 
     .board-row
       display: flex
