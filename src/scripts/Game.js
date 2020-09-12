@@ -35,6 +35,9 @@ class Game extends React.Component {
         this.shifts = new Array(16).fill(null);
         this.cells = new Array(16).fill(null);
 
+        //A property which turns on/off front cells animation
+        this.animate_cells = true;
+
         this.state = {
             history: [{cells: cells}], //stores the history of moves. each state of cells stores degrees of '2'
             score: 0,
@@ -81,6 +84,7 @@ class Game extends React.Component {
             let cell_num = i*4 + c;
             let class_str = (cur_cells[cell_num] == null) ? "empty" : "visible value-" + cur_cells[cell_num];
             class_str += (cur_shifts[cell_num]) ? " shift-" + cur_shifts[cell_num] : "";
+            class_str += this.animate_cells ? "" : " no-animate";
             cells[c] = (
                 <li key={"cell-" + cell_num}>
                     {this.renderCell(cell_num, cur_cells[cell_num], class_str) }
@@ -419,6 +423,7 @@ class Game extends React.Component {
             step_num: this.state.step_num + 1,
         }, () => {
             setTimeout(() => {
+                this.animate_cells = false;
                 this.setState({
                     history: this.state.history.concat([{cells: cells}]),
                     cell_state: cells.slice(),
@@ -426,11 +431,11 @@ class Game extends React.Component {
                 }, () => {
                     this.shifts = new Array(16).fill(null);
                     this.cells = cells.slice();
+                    this.animate_cells = true;
                     console.log("Stage changed after a move");
                 })
             }, 200);
         });
-
     }
 
     clearBoard() {
