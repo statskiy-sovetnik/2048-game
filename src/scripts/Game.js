@@ -434,7 +434,7 @@ class Game extends React.Component {
         }, () => {
             setTimeout(() => {
                 this.animate_cells = false;
-                this.spawnCell(2);
+                this.spawnCell(1);
                 cells = this.cells.slice();
                 this.setState({
                     history: this.state.history.concat([{cells: cells}]),
