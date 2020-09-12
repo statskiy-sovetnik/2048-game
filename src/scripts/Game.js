@@ -38,6 +38,9 @@ class Game extends React.Component {
         //A property which turns on/off front cells animation
         this.animate_cells = true;
 
+        //A lock which prevents from making a move
+        this.move_lock = false;
+
         this.state = {
             history: [{cells: cells}], //stores the history of moves. each state of cells stores degrees of '2'
             score: 0,
@@ -311,6 +314,10 @@ class Game extends React.Component {
     }
 
     makeMove(side) {
+        if(this.move_lock) {
+            return;
+        }
+        
         let cells;
         let cells_indeces = [];
 
@@ -417,6 +424,7 @@ class Game extends React.Component {
         }
 
         const cur_shifts = this.shifts.slice();
+        this.move_lock = true;
         this.setState({
             shifts_state: cur_shifts,
             score: 1000,
@@ -432,9 +440,10 @@ class Game extends React.Component {
                     this.shifts = new Array(16).fill(null);
                     this.cells = cells.slice();
                     this.animate_cells = true;
+                    this.move_lock = false;
                     console.log("Stage changed after a move");
                 })
-            }, 200);
+            }, 110);
         });
     }
 
