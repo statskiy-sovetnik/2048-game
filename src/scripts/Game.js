@@ -344,6 +344,18 @@ class Game extends React.Component {
         return score;
     }
 
+    calcLeastDeg(cells) {
+        let least_value = 2048;
+        let least_deg;
+        for(let value of cells) {
+            if(value == null) {continue}
+            least_value = (value <= least_value) ? +value : least_value;
+        }
+        least_deg = Math.floor(Math.log2(least_value));
+        least_deg = (this.state.step_num >= 100 * least_deg || least_deg < 2) ? least_deg : least_deg - 1;
+        return least_deg;
+    }
+
     makeMove(side) {
         if(this.move_lock) {
             return;
@@ -460,11 +472,13 @@ class Game extends React.Component {
 
         const cur_shifts = this.shifts.slice();
         this.move_lock = true;
+        const least_deg = this.calcLeastDeg(cells);
 
         this.setState({
             shifts_state: cur_shifts,
             score: this.calcScore(cells),
             step_num: this.state.step_num + 1,
+            least: least_deg,
         }, () => {
             setTimeout(() => {
                 this.animate_cells = false;
