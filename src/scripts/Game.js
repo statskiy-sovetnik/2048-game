@@ -479,6 +479,7 @@ class Game extends React.Component {
         this.setState({
             history: this.state.history.slice(0, this.state.history.length - 1),
             step_num: moves - 1,
+            score: this.calcScore(this.cells),
         })
     }
 
