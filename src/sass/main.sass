@@ -95,7 +95,7 @@ ol
         left: 0
         right: 0
         bottom: 0
-        transition: top $cellMoveTime linear, bottom $cellMoveTime linear, left $cellMoveTime linear, right $cellMoveTime linear
+        transition: top $cellMoveTime linear, bottom $cellMoveTime linear, left $cellMoveTime linear, right $cellMoveTime linear !important
         background-color: transparent
 
         span.cell-text
@@ -109,6 +109,9 @@ ol
           height: $cellSize
           border-radius: 3px
           background: #e3e2d4
+
+        &.no-animate
+          transition: top 0s linear, bottom 0s linear, left 0s linear, right 0s linear !important
 
         @include multi-shift("bottom", 3)
         @include multi-shift("bottom", 2)

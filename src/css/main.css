@@ -7284,7 +7284,7 @@ ol {
         left: 0;
         right: 0;
         bottom: 0;
-        transition: top 0.1s linear, bottom 0.1s linear, left 0.1s linear, right 0.1s linear;
+        transition: top 0.1s linear, bottom 0.1s linear, left 0.1s linear, right 0.1s linear !important;
         background-color: transparent; }
         .game-space .board-row-wrapper#frontBoard .cell span.cell-text {
           color: #1f1611; }
@@ -7296,6 +7296,8 @@ ol {
           height: 60px;
           border-radius: 3px;
           background: #e3e2d4; }
+        .game-space .board-row-wrapper#frontBoard .cell.no-animate {
+          transition: top 0s linear, bottom 0s linear, left 0s linear, right 0s linear !important; }
         .game-space .board-row-wrapper#frontBoard .cell.shift-bottom-3 {
           top: 201px; }
         .game-space .board-row-wrapper#frontBoard .cell.shift-bottom-2 {

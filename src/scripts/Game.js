@@ -35,42 +35,15 @@ class Game extends React.Component {
         this.shifts = new Array(16).fill(null);
         this.cells = new Array(16).fill(null);
 
-        //Mutex
-        this.start_game_mutex = false;
-        this.waitForStartGameMutex = () => {
-            let counter = 0;
-            let mutex = this.startGameMutex;
-            const timer = setInterval(() => {
-                if(counter >= 10 || mutex) {
-                    clearInterval(timer);
-                    this.startGame(true);
-                }
-                mutex = this.startGameMutex;
-                counter++;
-            }, 50);
-        }
-
         this.state = {
             history: [{cells: cells}], //stores the history of moves. each state of cells stores degrees of '2'
             score: 0,
             cell_state: new Array(16).fill(null),
+            shifts_state: new Array(16).fill(null),
             least: 1,    //the least degree of '2' on the board
             step_num: 0,
             game_started: false,
         }
-    }
-
-    pause(ms) {
-        let dt = new Date();
-        while ((new Date()) - dt <= ms) { /* Do nothing */ }
-    }
-
-    set startGameMutex(value) {
-        this.start_game_mutex = value;
-    }
-
-    get startGameMutex() {
-        return this.start_game_mutex;
     }
 
     renderCell(i, value, class_str) {
@@ -101,7 +74,7 @@ class Game extends React.Component {
         const cur_state = {};
         Object.assign(cur_state, this.state.history[this.state.history.length - 1]);
         const cur_cells = cur_state.cells;
-        const cur_shifts = this.shifts.slice();
+        const cur_shifts = this.state.shifts_state.slice();
         const cells = [];
 
         for (let c = 0; c < 4; c++) {
@@ -328,7 +301,7 @@ class Game extends React.Component {
     }
 
     getCurrentShift(cell) {
-        const cur_shifts = this.shifts;
+        const cur_shifts = this.shifts.slice();
         let cur_multi_shift = cur_shifts[cell];
         return cur_multi_shift ? +cur_multi_shift[cur_multi_shift.length - 1] : 0;
     }
@@ -356,9 +329,6 @@ class Game extends React.Component {
 
         //Take each row/column
         for(let i = 0; i < 4; i++) {
-            /*if(!seek && steps[0] !== i) {
-                continue
-            }*/
 
             let neighbr_cells = {}, first, second;
             let moving_cell = null;
@@ -419,7 +389,7 @@ class Game extends React.Component {
                                 moving_cell_row_ind = 3 - Math.floor(moving_cell / 4) - cur_mc_shift;
                                 break;
                             case 3:
-                                moving_cell_row_ind = 3 - Math.floor(moving_cell / 4) - cur_mc_shift;
+                                moving_cell_row_ind = Math.floor(moving_cell % 4) - cur_mc_shift;
                                 break;
                         }
 
@@ -442,11 +412,25 @@ class Game extends React.Component {
 
         }
 
+        const cur_shifts = this.shifts.slice();
         this.setState({
+            shifts_state: cur_shifts,
             score: 1000,
+            step_num: this.state.step_num + 1,
         }, () => {
-            console.log("All shifts changed");
-        })
+            setTimeout(() => {
+                this.setState({
+                    history: this.state.history.concat([{cells: cells}]),
+                    cell_state: cells.slice(),
+                    shifts_state: new Array(16).fill(null),
+                }, () => {
+                    this.shifts = new Array(16).fill(null);
+                    this.cells = cells.slice();
+                    console.log("Stage changed after a move");
+                })
+            }, 200);
+        });
+
     }
 
     clearBoard() {
@@ -454,6 +438,8 @@ class Game extends React.Component {
         this.shifts = new Array(16).fill(null);
 
         this.setState({
+            cell_state: new Array(16).fill(null),
+            shifts_state: new Array(16).fill(null),
             history: [{cells: new Array(16).fill(null)}], //stores the history of moves. each state of cells stores degrees of '2'
             score: 0,
             least: 1,    //the least degree of '2' on the board
@@ -469,7 +455,7 @@ class Game extends React.Component {
             return;
         }
 
-        this.cell_state = this.state.history[this.state.history.length - 2].cells.slice();
+        this.cells = this.state.history[this.state.history.length - 2].cells.slice();
         this.setState({
             history: this.state.history.slice(0, this.state.history.length - 1),
             step_num: moves - 1,
