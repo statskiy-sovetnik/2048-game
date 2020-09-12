@@ -236,7 +236,37 @@ class Game extends React.Component {
         return neigbr_cells;
     }
 
-    mergeCells(from, to) {
+    mergeCells(from, to, moving_cell) {  //returns a new born value
+        const direction = this.defineDirctn(from, to);
+        let cur_shifts = this.shifts.slice();
+        let cur_cells = this.cells.slice();
+        let shift_size = this.getCurrentShift(moving_cell);
+        let new_value;
+
+        switch (direction) {
+            case 0:
+                cur_shifts[moving_cell] = "top-" + (shift_size + 1);
+                break;
+            case 1:
+                cur_shifts[moving_cell] = "right-" + (shift_size + 1);
+                break;
+            case 2:
+                cur_shifts[moving_cell] = "bottom-" + (shift_size + 1);
+                break;
+            case 3:
+                cur_shifts[moving_cell] = "left-" + (shift_size + 1);
+                break;
+            default:
+                cur_shifts[moving_cell] = "top-" + (shift_size + 1);
+        }
+
+        cur_cells[to] = +cur_cells[from] * 2;
+        cur_cells[from] = null;
+        new_value = cur_cells[to];
+        this.cells = cur_cells;
+        this.shifts = cur_shifts;
+
+        return new_value;
     }
 
     removeCell(ind) {
@@ -370,17 +400,21 @@ class Game extends React.Component {
                 neighbr_cells = this.takeTwoCells(cur_row, j);
                 first = neighbr_cells.indeces[0];
                 second = neighbr_cells.indeces[1];
+                const from = cells_indeces[i][3-second];
+                const to = cells_indeces[i][3-first];
                 console.log(neighbr_cells);
 
                 if(neighbr_cells[second] != null) {  //"from" is not empty
                     if(neighbr_cells[first] != null) {  //"to" is not empty
                         if(neighbr_cells[first] === neighbr_cells[second]) {
-                            this.mergeCells(cells_indeces[i][3-first], cells_indeces[i][3-second]);
+                            this.mergeCells(from, to);
+                        }
+                        else {
+                            /*do nothing*/
                         }
                     }
                     else {
-                        let from = cells_indeces[i][3-second];
-                        let to = cells_indeces[i][3-first];
+
                         this.moveCell(from, to, moving_cell);
 
                         cells = this.cells.slice();
