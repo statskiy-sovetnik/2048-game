@@ -307,6 +307,8 @@ class Game extends React.Component {
         let cur_cells = this.cells.slice();
         let shift_size = this.getCurrentShift(moving_cell);
 
+        console.log("Move from " + from + " to " + to);
+
         switch (direction) {
             case 0:
                 cur_shifts[moving_cell] = "top-" + (shift_size + 1);
@@ -379,6 +381,9 @@ class Game extends React.Component {
             (cur_row[mc_row_ind - 1] != null && cur_row[mc_row_ind - 1] !== cur_row[mc_row_ind])){
             console.log("RESET MC");
             moving_cell = null;
+        }
+        else {
+            console.log("DON'T RESET MC");
         }
 
         return moving_cell;
@@ -457,6 +462,8 @@ class Game extends React.Component {
                             });
                             let move_direction = this.defineDirctn(from, to);
                             moving_cell = this.correctMovingCell(moving_cell, cur_row, move_direction);
+
+                            j = -1;
                         }
                         else {
                             /*do nothing*/
