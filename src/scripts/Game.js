@@ -242,6 +242,8 @@ class Game extends React.Component {
         let cur_cells = this.cells.slice();
         let shift_size = this.getCurrentShift(moving_cell);
         let new_value;
+        console.log("Moving cell: " + moving_cell + " with shift " + shift_size);
+        console.log("Merge from " + from + " to " + to);
 
         switch (direction) {
             case 0:
@@ -305,8 +307,6 @@ class Game extends React.Component {
         let cur_cells = this.cells.slice();
         let shift_size = this.getCurrentShift(moving_cell);
 
-        console.log("From: " + from + " To: " + to);
-
         switch (direction) {
             case 0:
                 cur_shifts[moving_cell] = "top-" + (shift_size + 1);
@@ -356,6 +356,34 @@ class Game extends React.Component {
         return least_deg;
     }
 
+    correctMovingCell(moving_cell, cur_row, move_directn) {
+        let cur_mc_shift = this.getCurrentShift(moving_cell);
+        let mc_row_ind;
+        switch (move_directn) {
+            case 0:
+                mc_row_ind = Math.floor(moving_cell / 4) - cur_mc_shift;
+                break;
+            case 1:
+                mc_row_ind = 3 - (moving_cell % 4) - cur_mc_shift;
+                break;
+            case 2:
+                mc_row_ind = 3 - Math.floor(moving_cell / 4) - cur_mc_shift;
+                break;
+            case 3:
+                mc_row_ind = Math.floor(moving_cell % 4) - cur_mc_shift;
+                break;
+        }
+
+        //If you can't move current moving cell anymore, you have to change it
+        if(mc_row_ind === 0 ||
+            (cur_row[mc_row_ind - 1] != null && cur_row[mc_row_ind - 1] !== cur_row[mc_row_ind])){
+            console.log("RESET MC");
+            moving_cell = null;
+        }
+
+        return moving_cell;
+    }
+
     makeMove(side) {
         if(this.move_lock) {
             return;
@@ -401,7 +429,8 @@ class Game extends React.Component {
                 //Finding a cell which we can move
                 if(moving_cell == null) {
                     for(let c = 0; c < 4; c++) {
-                        if (cur_row[c] !== null && c !== 0 && cur_row[c-1] == null) {
+                        if (cur_row[c] !== null && c !== 0 &&
+                            (cur_row[c-1] == null || cur_row[c-1] === cur_row[c])) {
                             moving_cell = cells_indeces[i][c];
                             break;
                         }
@@ -409,6 +438,7 @@ class Game extends React.Component {
                 }
                 console.log("Moving cell: " + moving_cell);
 
+                //Taking next two cells to check
                 neighbr_cells = this.takeTwoCells(cur_row, j);
                 first = neighbr_cells.indeces[0];
                 second = neighbr_cells.indeces[1];
@@ -418,14 +448,21 @@ class Game extends React.Component {
 
                 if(neighbr_cells[second] != null) {  //"from" is not empty
                     if(neighbr_cells[first] != null) {  //"to" is not empty
-                        if(neighbr_cells[first] === neighbr_cells[second]) {
-                            this.mergeCells(from, to);
+                        if(neighbr_cells[first] === neighbr_cells[second]) {  //merging two cells
+                            this.mergeCells(from, to, moving_cell);
+
+                            cells = this.cells.slice();
+                            cur_row = cells_indeces[i].map((cell_ind) => {
+                                return cells[cell_ind];
+                            });
+                            let move_direction = this.defineDirctn(from, to);
+                            moving_cell = this.correctMovingCell(moving_cell, cur_row, move_direction);
                         }
                         else {
                             /*do nothing*/
                         }
                     }
-                    else {
+                    else { //moving one cell to the empty slot
 
                         this.moveCell(from, to, moving_cell);
 
@@ -433,43 +470,17 @@ class Game extends React.Component {
                         cur_row = cells_indeces[i].map((cell_ind) => {
                             return cells[cell_ind];
                         });
-                        let cur_mc_shift = this.getCurrentShift(moving_cell);
                         let move_direction = this.defineDirctn(from, to);
-                        let moving_cell_row_ind;
-                        switch (move_direction) {
-                            case 0:
-                                moving_cell_row_ind = Math.floor(moving_cell / 4) - cur_mc_shift;
-                                break;
-                            case 1:
-                                moving_cell_row_ind = 3 - (moving_cell % 4) - cur_mc_shift;
-                                break;
-                            case 2:
-                                moving_cell_row_ind = 3 - Math.floor(moving_cell / 4) - cur_mc_shift;
-                                break;
-                            case 3:
-                                moving_cell_row_ind = Math.floor(moving_cell % 4) - cur_mc_shift;
-                                break;
-                        }
-
-                        console.log("Row(after move): " + cur_row);
-                        console.log("Moving cell in row at " + moving_cell_row_ind);
-
-                        //If you can't move current moving cell anymore, you have to change it
-                        if(moving_cell_row_ind === 0 || cur_row[moving_cell_row_ind - 1] != null){
-                            console.log("RESET MC");
-                            moving_cell = null;
-                        }
+                        moving_cell = this.correctMovingCell(moving_cell, cur_row, move_direction);
 
                         j = -1;
                     }
                 }
-                else {
-                }
-
             }
 
         }
 
+        cells = this.cells;
         const cur_shifts = this.shifts.slice();
         this.move_lock = true;
         const least_deg = this.calcLeastDeg(cells);
