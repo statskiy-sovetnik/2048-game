@@ -135,13 +135,6 @@ class Game extends React.Component {
             console.log("Slot " + slot_id);
         }
 
-        //this.startGameMutex = false;
-        /*this.setState({
-            cell_state: cur_cells, //when a cell spawns, it doesn't update the whole history, so that when you
-                                   //go the the previous move, it woudn't just remove the cell
-        }, () => {
-            this.startGameMutex = true;
-        });*/
         this.cells = cur_cells;
     }
 
@@ -313,11 +306,19 @@ class Game extends React.Component {
         return cur_multi_shift ? +cur_multi_shift[cur_multi_shift.length - 1] : 0;
     }
 
+    calcScore(cells) {
+        let score = 0;
+        for(let value of cells) {
+            score += +value;
+        }
+        return score;
+    }
+
     makeMove(side) {
         if(this.move_lock) {
             return;
         }
-        
+
         let cells;
         let cells_indeces = [];
 
@@ -425,13 +426,16 @@ class Game extends React.Component {
 
         const cur_shifts = this.shifts.slice();
         this.move_lock = true;
+
         this.setState({
             shifts_state: cur_shifts,
-            score: 1000,
+            score: this.calcScore(cells),
             step_num: this.state.step_num + 1,
         }, () => {
             setTimeout(() => {
                 this.animate_cells = false;
+                this.spawnCell(2);
+                cells = this.cells.slice();
                 this.setState({
                     history: this.state.history.concat([{cells: cells}]),
                     cell_state: cells.slice(),
@@ -445,6 +449,8 @@ class Game extends React.Component {
                 })
             }, 110);
         });
+
+
     }
 
     clearBoard() {
