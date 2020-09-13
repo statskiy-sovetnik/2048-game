@@ -7287,9 +7287,9 @@ ol {
     border-radius: 6px;
     padding: 3.5px 0; }
     .game-space .board-row-wrapper#backBoard {
-      background-color: #a29b7b; }
+      background-color: #bbada0; }
       .game-space .board-row-wrapper#backBoard .cell {
-        background-color: #c6c5a4; }
+        background-color: #ccc0b3; }
     .game-space .board-row-wrapper#frontBoard {
       height: 275px;
       width: 275px;
@@ -7316,6 +7316,50 @@ ol {
           background: #e3e2d4; }
         .game-space .board-row-wrapper#frontBoard .cell.no-animate {
           transition: top 0s linear, bottom 0s linear, left 0s linear, right 0s linear !important; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-2 span.cell-text {
+          color: #1f1611; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-2::before {
+          background-color: #eee4da; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-4 span.cell-text {
+          color: #1f1611; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-4::before {
+          background-color: #ede0c8; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-8 span.cell-text {
+          color: #fff; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-8::before {
+          background-color: #f2b179; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-16 span.cell-text {
+          color: #fff; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-16::before {
+          background-color: #f59563; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-32 span.cell-text {
+          color: #fff; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-32::before {
+          background-color: #f67c5f; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-64 span.cell-text {
+          color: #fff; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-64::before {
+          background-color: #f65e3b; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-128 span.cell-text {
+          color: #fff; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-128::before {
+          background-color: #edcf72; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-256 span.cell-text {
+          color: #fff; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-256::before {
+          background-color: #edcc61; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-512 span.cell-text {
+          color: #fff; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-512::before {
+          background-color: #edcc61; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-1024 span.cell-text {
+          color: #fff; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-1024::before {
+          background-color: #edc53f; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-2048 span.cell-text {
+          color: #fff; }
+        .game-space .board-row-wrapper#frontBoard .cell.value-2048::before {
+          background-color: #e3ba2f; }
         .game-space .board-row-wrapper#frontBoard .cell.shift-bottom-3 {
           top: 201px; }
         .game-space .board-row-wrapper#frontBoard .cell.shift-bottom-2 {

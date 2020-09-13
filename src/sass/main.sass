@@ -98,9 +98,9 @@ ol
     padding: $cellMargin / 2 0
 
     &#backBoard
-      background-color: #a29b7b
+      background-color: #bbada0
       .cell
-        background-color: #c6c5a4
+        background-color: #ccc0b3
 
     &#frontBoard
       height: $boardSize
@@ -133,6 +133,62 @@ ol
 
         &.no-animate
           transition: top 0s linear, bottom 0s linear, left 0s linear, right 0s linear !important
+
+        &.value-2
+          span.cell-text
+            color: #1f1611
+          &::before
+            background-color: #eee4da
+        &.value-4
+          span.cell-text
+            color: #1f1611
+          &::before
+            background-color: #ede0c8
+        &.value-8
+          span.cell-text
+            color: #fff
+          &::before
+            background-color: #f2b179
+        &.value-16
+          span.cell-text
+            color: #fff
+          &::before
+            background-color: #f59563
+        &.value-32
+          span.cell-text
+            color: #fff
+          &::before
+            background-color: #f67c5f
+        &.value-64
+          span.cell-text
+            color: #fff
+          &::before
+            background-color: #f65e3b
+        &.value-128
+          span.cell-text
+            color: #fff
+          &::before
+            background-color: #edcf72
+        &.value-256
+          span.cell-text
+            color: #fff
+          &::before
+            background-color: #edcc61
+        &.value-512
+          span.cell-text
+            color: #fff
+          &::before
+            background-color: #edcc61
+        &.value-1024
+          span.cell-text
+            color: #fff
+          &::before
+            background-color: #edc53f
+        &.value-2048
+          span.cell-text
+            color: #fff
+          &::before
+            background-color: #e3ba2f
 
         @include multi-shift("bottom", 3)
         @include multi-shift("bottom", 2)
