@@ -106,8 +106,6 @@ class Game extends React.Component {
 
     findEmptySlot(cells) {
         const empty_slots = [];
-        /*const cur_state = {};
-        Object.assign(cur_state, this.state.history[this.state.history.length - 1]);*/
 
         let cur_ind = 0;
         for(let ind = 0; ind < cells.length; ind++) {
@@ -116,9 +114,9 @@ class Game extends React.Component {
                 cur_ind++;
             }
         }
+        let random_id = Math.round(Math.random() * (empty_slots.length - 1));
 
-        return (empty_slots.length === 0) ? null :
-            empty_slots[Math.round(Math.random() * empty_slots.length)];
+        return (empty_slots.length === 0) ? null : empty_slots[random_id];
     }
 
     //Spawn a new cell at a random empty spot
@@ -411,8 +409,6 @@ class Game extends React.Component {
             for(let j = 0; j < 4; j++) {
                 cur_id = i*4 + j;
                 let cur_nearby_cells = this.getSurroundingCells(cur_id, cells_after_spawn);
-                console.log(cur_id + " nearby cells: " + cur_nearby_cells);
-                console.log(cells_after_spawn[cur_id]);
                 for(let c = 0; c < cur_nearby_cells.length; c++) {
                     if(cells_after_spawn[cur_id] === cur_nearby_cells[c]) {
                         return false;
