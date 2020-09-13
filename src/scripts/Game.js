@@ -443,7 +443,6 @@ class Game extends React.Component {
 
     makeMove(side) {
         if(this.move_lock || this.state.game_over) {
-            console.log("Locked or game over!");
             return;
         }
 
@@ -552,7 +551,6 @@ class Game extends React.Component {
                 this.animate_cells = false;
                 this.spawnCell(1);
                 const cells_after_spawn = this.cells.slice();
-                console.log("After spawn: " + cells_after_spawn);
                 const game_over = this.isGameOver(cells, cells_after_spawn);
 
                 this.setState({
