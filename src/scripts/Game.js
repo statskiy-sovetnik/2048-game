@@ -16,6 +16,7 @@ class Game extends React.Component {
 
         this.CELL_MARGIN = 7;
         this.CELL_SIZE = 60;
+        this.BOARD_SIZE = this.CELL_SIZE * 4 + this.CELL_MARGIN * 5;
 
         //Setting the indeces arrays _______________
         for(let i = 0; i < 4; i++){
@@ -49,6 +50,7 @@ class Game extends React.Component {
             least: 1,    //the least degree of '2' on the board
             step_num: 0,
             game_started: false,
+            game_over: false,
         }
     }
 
@@ -115,11 +117,8 @@ class Game extends React.Component {
             }
         }
 
-        let slot_id = 0;
-        while(empty_slots.indexOf(slot_id) === -1) {
-            slot_id = Math.round(Math.random() * 15);
-        }
-        return slot_id;
+        return (empty_slots.length === 0) ? null :
+            empty_slots[Math.round(Math.random() * empty_slots.length)];
     }
 
     //Spawn a new cell at a random empty spot
@@ -131,8 +130,9 @@ class Game extends React.Component {
             const slot_id = this.findEmptySlot(cur_cells);
 
             //Placing the least number on the empty slot
-            cur_cells[slot_id] = Math.pow(2, this.state.least);
-            console.log("Slot " + slot_id);
+            if(slot_id != null) {
+                cur_cells[slot_id] = Math.pow(2, this.state.least);
+            }
         }
 
         this.cells = cur_cells;
@@ -166,12 +166,11 @@ class Game extends React.Component {
     }
 
     startGame() {
-        /*if(!intervalFlag) {
-        }*/
+        if(this.state.game_over) {
+            this.cancelGameOver();
+        }
         this.clearBoard();
         this.spawnCell(2);
-        //this.waitForStartGameMutex(); //here the flag changes
-        //return;
 
         const cells = this.cells;
         this.setState({
@@ -242,8 +241,6 @@ class Game extends React.Component {
         let cur_cells = this.cells.slice();
         let shift_size = this.getCurrentShift(moving_cell);
         let new_value;
-        console.log("Moving cell: " + moving_cell + " with shift " + shift_size);
-        console.log("Merge from " + from + " to " + to);
 
         switch (direction) {
             case 0:
@@ -269,10 +266,6 @@ class Game extends React.Component {
         this.shifts = cur_shifts;
 
         return new_value;
-    }
-
-    removeCell(ind) {
-
     }
 
     defineDirctn(from, to) {
@@ -306,8 +299,6 @@ class Game extends React.Component {
         let cur_shifts = this.shifts.slice();
         let cur_cells = this.cells.slice();
         let shift_size = this.getCurrentShift(moving_cell);
-
-        console.log("Move from " + from + " to " + to);
 
         switch (direction) {
             case 0:
@@ -379,18 +370,84 @@ class Game extends React.Component {
         //If you can't move current moving cell anymore, you have to change it
         if(mc_row_ind === 0 ||
             (cur_row[mc_row_ind - 1] != null && cur_row[mc_row_ind - 1] !== cur_row[mc_row_ind])){
-            console.log("RESET MC");
             moving_cell = null;
         }
         else {
-            console.log("DON'T RESET MC");
         }
 
         return moving_cell;
     }
 
+    getSurroundingCells(cell_id, cells) {
+        let nearby_cells = [];
+        if(cell_id % 4 !== 3) {  //if the cell IS NOT IN LAST COLUMN
+            nearby_cells.push(cells[cell_id + 1]);
+        }
+        if(Math.floor(cell_id / 4) !== 3) { //if the cell IS NOT IN LAST ROW
+            nearby_cells.push(cells[cell_id + 4]);
+        }
+        if(cell_id % 4 !== 0) {
+            nearby_cells.push(cells[cell_id - 1]);
+        }
+        if(Math.floor(cell_id / 4) !== 0) {
+            nearby_cells.push(cells[cell_id - 4]);
+        }
+        return nearby_cells;
+    }
+
+    isGameOver(cells, cells_after_spawn) {
+        let cur_id;
+
+        for(let i = 0; i < 4; i++) {
+            for(let j = 0; j < 4; j++) {
+                cur_id = i*4 + j;
+                if(cells_after_spawn[cur_id] == null) {
+                    return false;
+                }
+            }
+        }
+
+        for(let i = 0; i < 4; i++) {
+            for(let j = 0; j < 4; j++) {
+                cur_id = i*4 + j;
+                let cur_nearby_cells = this.getSurroundingCells(cur_id, cells_after_spawn);
+                console.log(cur_id + " nearby cells: " + cur_nearby_cells);
+                console.log(cells_after_spawn[cur_id]);
+                for(let c = 0; c < cur_nearby_cells.length; c++) {
+                    if(cells_after_spawn[cur_id] === cur_nearby_cells[c]) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    showGameOver() {
+        document.querySelector(".game-space").classList.add("game-over");
+    }
+
+    cancelGameOver() {
+        this.setState({
+            game_over: false,
+        })
+        document.querySelector(".game-space").classList.remove("game-over");
+    }
+
+    renderGameOverPanel() {
+        return (
+          <div
+              className="game-over-panel"
+          >
+              Конец игры!
+          </div>
+        );
+    }
+
     makeMove(side) {
-        if(this.move_lock) {
+        if(this.move_lock || this.state.game_over) {
+            console.log("Locked or game over!");
             return;
         }
 
@@ -429,7 +486,6 @@ class Game extends React.Component {
                 cur_row = cells_indeces[i].map((cell_ind) => {
                     return cells[cell_ind];
                 });
-                console.log("Row: " + cur_row);
 
                 //Finding a cell which we can move
                 if(moving_cell == null) {
@@ -441,7 +497,6 @@ class Game extends React.Component {
                         }
                     }
                 }
-                console.log("Moving cell: " + moving_cell);
 
                 //Taking next two cells to check
                 neighbr_cells = this.takeTwoCells(cur_row, j);
@@ -449,7 +504,6 @@ class Game extends React.Component {
                 second = neighbr_cells.indeces[1];
                 const from = cells_indeces[i][3-second];
                 const to = cells_indeces[i][3-first];
-                console.log(neighbr_cells);
 
                 if(neighbr_cells[second] != null) {  //"from" is not empty
                     if(neighbr_cells[first] != null) {  //"to" is not empty
@@ -501,17 +555,20 @@ class Game extends React.Component {
             setTimeout(() => {
                 this.animate_cells = false;
                 this.spawnCell(1);
-                cells = this.cells.slice();
+                const cells_after_spawn = this.cells.slice();
+                console.log("After spawn: " + cells_after_spawn);
+                const game_over = this.isGameOver(cells, cells_after_spawn);
+
                 this.setState({
-                    history: this.state.history.concat([{cells: cells}]),
-                    cell_state: cells.slice(),
+                    history: this.state.history.concat([{cells: cells_after_spawn}]),
+                    cell_state: cells_after_spawn.slice(),
                     shifts_state: new Array(16).fill(null),
+                    game_over: game_over,
                 }, () => {
                     this.shifts = new Array(16).fill(null);
-                    this.cells = cells.slice();
+                    this.cells = cells_after_spawn.slice();
                     this.animate_cells = true;
                     this.move_lock = false;
-                    console.log("Stage changed after a move");
                 })
             }, 110);
         });
@@ -541,6 +598,10 @@ class Game extends React.Component {
             return;
         }
 
+        if(this.state.game_over) {
+            this.cancelGameOver();
+        }
+
         this.cells = this.state.history[this.state.history.length - 2].cells.slice();
         this.setState({
             history: this.state.history.slice(0, this.state.history.length - 1),
@@ -550,12 +611,15 @@ class Game extends React.Component {
     }
 
     render() {
-        console.log("Game Renders");
-
         const game_guide = !this.state.game_started ?
             "Нажмите \"Начать\", чтобы создать первые клетки" :
             "Нажмите на одну из кнопок со стрелками, чтобы переместить клетки";
         const game_started = this.state.game_started;
+        const game_over = this.state.game_over;
+        const game_over_panel = game_over ? this.renderGameOverPanel() : null;
+        if(game_over) {
+            this.showGameOver();
+        }
 
         return (
             <div className="game-space">
@@ -600,6 +664,7 @@ class Game extends React.Component {
                     renderRow={(i) => this.renderRow(i)}
                     renderFrontRow={(i) => this.renderFrontRow(i)}
                 />
+                {game_over_panel}
             </div>
         )
     }

@@ -7221,7 +7221,8 @@ a.text-dark:hover, a.text-dark:focus {
     border-color: #dee2e6; } }
 
 html, body {
-  background: #e3dedd; }
+  background: #e3dedd;
+  overflow: hidden; }
 
 ol {
   list-style: none;
@@ -7235,6 +7236,8 @@ ol {
   left: 50%;
   transform: translateY(-50%) translateX(-50%);
   padding-top: 275px; }
+  .game-space.game-over {
+    padding-top: 550px; }
   .game-space .game-panel {
     display: flex;
     flex-direction: row;
@@ -7264,6 +7267,21 @@ ol {
     .game-space .arrows-block .middle-arrows-block {
       display: flex;
       flex-direction: row; }
+  .game-space .game-over-panel {
+    position: relative;
+    bottom: 550px;
+    width: 275px;
+    height: 275px;
+    border-radius: 6px;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.45);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-size: 22px;
+    font-weight: normal; }
   .game-space .board-row-wrapper {
     display: table;
     border-radius: 6px;
